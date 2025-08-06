@@ -42,6 +42,14 @@ if not is_admin():
     )
     sys.exit()
 
+def resource_path(relative_path):
+    try:
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+    
+    return os.path.join(base_path, relative_path)
+
 class Styles:
     MAIN_WINDOW = """
         QMainWindow {
@@ -216,9 +224,8 @@ class ShutdownApp(QMainWindow):
         self.progress.setVisible(False)
         layout.addWidget(self.progress)
 
-        dir_path = os.path.dirname(os.path.realpath(__file__))
-        self.moon_icon = self.create_icon(os.path.join(dir_path, "..", "assets", "moon.png"))
-        self.sun_icon = self.create_icon(os.path.join(dir_path, "..", "assets", "sun.png"))
+        self.moon_icon = self.create_icon(resource_path("assets/moon.png"))
+        self.sun_icon = self.create_icon(resource_path("assets/sun.png"))
         now = datetime.now()
         is_day = 6 <= now.hour < 18
         icon = self.sun_icon if is_day else self.moon_icon

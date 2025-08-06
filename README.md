@@ -44,7 +44,7 @@ To package the application into a standalone `.exe` file:
 
 2. Run the following command:
    ```bash
-   pyinstaller --onefile --noconsole --clean --icon=assets/sun.png --add-data "assets;assets" --name "ModernShutdownScheduler" src/ModernShutdownScheduler.py
+   pyinstaller --onefile --noconsole --clean --icon=assets/sun.ico --add-data "assets;assets" --name "ModernShutdownScheduler" src/ModernShutdownScheduler.py
    ```
 
 3. The executable will be located in the `dist/` folder.
