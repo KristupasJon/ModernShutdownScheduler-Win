@@ -28,6 +28,12 @@ Modern Shutdown Scheduler is a sleek and user-friendly PyQt6-based application f
   - PyQt6
   - Other standard Python libraries (e.g., `ctypes`, `subprocess`)
 
+## Download or Clone
+
+You can download the latest release directly from the [Releases](https://github.com/KristupasJon/ModernShutdownScheduler-Win/releases/tag/stable) page.
+
+Alternatively, you may choose to clone the repository and run the application as described in the [Installation](#installation) section.
+
 ## Installation
 1. Clone the repository:
    ```bash
