@@ -22,11 +22,7 @@ Modern Shutdown Scheduler is a sleek and user-friendly PyQt6-based application f
 - System log for tracking actions.
 
 ## Requirements
-- **Operating System**: Windows (only)
-- **Python Version**: Python 3.9 or higher
-- **Dependencies**:
-  - PyQt6
-  - Other standard Python libraries (e.g., `ctypes`, `subprocess`)
+- **Operating System**: Windows
 
 ## Download or Clone
 
@@ -52,6 +48,14 @@ Alternatively, you may choose to clone the repository and run the application as
    ```
 
 ## Building the Executable
+
+Requirements:
+- **Operating System**: Windows (only)
+- **Python Version**: Python 3.9 or higher
+- **Dependencies**:
+  - PyQt6
+  - Other standard Python libraries (e.g., `ctypes`, `subprocess`)
+
 To package the application into a standalone `.exe` file:
 
 1. Install PyInstaller:
