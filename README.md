@@ -3,6 +3,17 @@
 ## Overview
 Modern Shutdown Scheduler is a sleek and user-friendly PyQt6-based application for scheduling system shutdowns. It features a modern UI with dynamic animations and color transitions based on the time of day.
 
+<table>
+  <tr>
+    <td>
+      <img width="850" height="807" alt="image" src="https://github.com/user-attachments/assets/dd627e2e-d112-4ca0-ac4f-36de96eb9b07" />
+    </td>
+    <td>
+      <img width="864" height="780" alt="image" src="https://github.com/user-attachments/assets/fb3a56dd-a590-4915-9da1-d9d3a72c72fa" />
+    </td>
+  </tr>
+</table>
+
 ## Features
 - Schedule system shutdowns with a slider-based time picker.
 - Dynamic background and slider color transitions.
