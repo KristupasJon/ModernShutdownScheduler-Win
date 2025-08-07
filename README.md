@@ -1,7 +1,7 @@
 # Modern Shutdown Scheduler
 
 ## Overview
-Modern Shutdown Scheduler is a sleek and user-friendly PyQt6-based application for scheduling system shutdowns. It features a modern UI with dynamic animations and color transitions based on the time of day.
+Modern Shutdown Scheduler is a sleek, super lightweight, and user-friendly PyQt6-based application for scheduling system shutdowns. It features a modern UI with dynamic animations and color transitions based on the time of day, and uses very little memory.
 
 <table>
   <tr>
@@ -15,11 +15,12 @@ Modern Shutdown Scheduler is a sleek and user-friendly PyQt6-based application f
 </table>
 
 ## Features
-- Schedule system shutdowns with a slider-based time picker.
-- Dynamic background and slider color transitions.
-- Sun and moon animations based on the time of day.
-- Cancel scheduled shutdowns with a single click.
-- System log for tracking actions.
+- Super lightweight and uses very little memory
+- Schedule system shutdowns with a slider-based time picker
+- Dynamic background and slider color transitions
+- Sun and moon animations based on the time of day
+- Cancel scheduled shutdowns with a single click
+- System log for tracking actions
 
 ## Requirements
 - **Operating System**: Windows
@@ -65,7 +66,7 @@ To package the application into a standalone `.exe` file:
 
 2. Run the following command:
    ```bash
-   pyinstaller --onefile --noconsole --clean --icon=assets/sun.ico --add-data "assets;assets" --name "ModernShutdownScheduler" src/ModernShutdownScheduler.py
+   pyinstaller --onefile --noconsole --clean --icon=assets/icons/icon.ico --add-data "assets;assets" --name "ModernShutdownScheduler" src/ModernShutdownScheduler.py
    ```
 
 3. The executable will be located in the `dist/` folder.

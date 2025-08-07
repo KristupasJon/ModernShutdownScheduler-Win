@@ -7,18 +7,18 @@ from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
     QPushButton, QTextEdit, QLabel, QSlider, QProgressBar, QMessageBox
 )
-from PyQt6.QtCore import Qt, QTimer, QPropertyAnimation, QRect
+from PyQt6.QtCore import Qt, QTimer
 from PyQt6.QtGui import QIcon
 from datetime import datetime, timedelta
 
-TOTAL_SECONDS_IN_DAY = 24 * 60 * 60
 MINUTES_IN_DAY = 24 * 60
 DEFAULT_SHUTDOWN_OFFSET = 1
 SLIDER_TICK_COUNT = 20
-ICON_SIZE = 128
+ICON_SIZE = 100
 
+MORNING_COLOR = (255, 200, 120)
 DAY_COLOR = (255, 255, 255)
-MID_COLOR = (220, 140, 60)
+EVENING_COLOR = (255, 140, 70)
 NIGHT_COLOR = (0, 0, 0)
 BLUE_COLOR = (79, 140, 255)
 ORANGE_COLOR = (220, 140, 60)
@@ -96,17 +96,20 @@ class Styles:
             border-radius: 6px;
         }
         QProgressBar {
-            background: rgba(255,255,255,0.08);
-            border-radius: 12px;
-            height: 18px;
+            background: #e6e6e6;
+            border-radius: 22px;
+            height: 22px;
             text-align: center;
-            color: #fff;
-            font-size: 14px;
+            color: #222;
+            font-size: 16px;
+            font-weight: bold;
             margin-bottom: 10px;
+            border: 2px solid #bdbdbd;
         }
         QProgressBar::chunk {
-            background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #4f8cff, stop:1 #1e2a4a);
-            border-radius: 12px;
+            background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #4f8cff, stop:1 #a084e8);
+            border-radius: 22px;
+            margin: 0px;
         }
     """
 
@@ -157,16 +160,143 @@ class ShutdownApp(QMainWindow):
         super().__init__()
         self.initUI()
 
+    def get_time_period(self, time_obj=None):
+        if time_obj is None:
+            time_obj = datetime.now()
+        hour = time_obj.hour
+        
+        if 5 <= hour < 8:
+            return "morning"
+        elif 8 <= hour < 19:
+            return "day"
+        elif 19 <= hour < 22:
+            return "evening"
+        else:
+            return "night"
+    
+    def get_smooth_colors(self, time_obj=None):
+        if time_obj is None:
+            time_obj = datetime.now()
+        
+        hour = time_obj.hour
+        minute = time_obj.minute
+        total_minutes = hour * 60 + minute
+        
+        
+        morning_start = 5 * 60      # 05:00
+        morning_end = 5 * 60 + 30   # 05:30
+        day_start = 8 * 60          # 08:00
+        day_end = 8 * 60 + 30       # 08:30
+        evening_start = 19 * 60     # 19:00
+        evening_end = 19 * 60 + 30  # 19:30
+        night_start = 22 * 60       # 22:00
+        night_end = 22 * 60 + 30    # 22:30
+        
+        if total_minutes < morning_start:
+            
+            bg_color = NIGHT_COLOR
+            text_color = (255, 255, 255)
+        elif total_minutes < morning_end:
+            
+            progress = (total_minutes - morning_start) / 30
+            bg_color = self.interpolate_color(NIGHT_COLOR, MORNING_COLOR, progress)
+            text_color = self.interpolate_color((255, 255, 255), (50, 50, 50), progress)
+        elif total_minutes < day_start:
+            
+            bg_color = MORNING_COLOR
+            text_color = (50, 50, 50)
+        elif total_minutes < day_end:
+            
+            progress = (total_minutes - day_start) / 30
+            bg_color = self.interpolate_color(MORNING_COLOR, DAY_COLOR, progress)
+            text_color = (50, 50, 50)
+        elif total_minutes < evening_start:
+            
+            bg_color = DAY_COLOR
+            text_color = (50, 50, 50)
+        elif total_minutes < evening_end:
+            
+            progress = (total_minutes - evening_start) / 30
+            bg_color = self.interpolate_color(DAY_COLOR, EVENING_COLOR, progress)
+            text_color = self.interpolate_color((50, 50, 50), (255, 255, 255), progress)
+        elif total_minutes < night_start:
+            
+            bg_color = EVENING_COLOR
+            text_color = (255, 255, 255)
+        elif total_minutes < night_end:
+            
+            progress = (total_minutes - night_start) / 30
+            bg_color = self.interpolate_color(EVENING_COLOR, NIGHT_COLOR, progress)
+            text_color = (255, 255, 255)
+        else:
+            
+            bg_color = NIGHT_COLOR
+            text_color = (255, 255, 255)
+            
+        return bg_color, text_color
+    
+    def get_smooth_slider_color(self, time_obj=None):
+        if time_obj is None:
+            time_obj = datetime.now()
+            
+        hour = time_obj.hour
+        minute = time_obj.minute
+        total_minutes = hour * 60 + minute
+        
+        
+        morning_start = 5 * 60      # 05:00
+        morning_end = 5 * 60 + 30   # 05:30
+        day_start = 8 * 60          # 08:00
+        day_end = 8 * 60 + 30       # 08:30
+        evening_start = 19 * 60     # 19:00
+        evening_end = 19 * 60 + 30  # 19:30
+        night_start = 22 * 60       # 22:00
+        night_end = 22 * 60 + 30    # 22:30
+        
+        if total_minutes < morning_start:
+            
+            return (100, 100, 200)
+        elif total_minutes < morning_end:
+            
+            progress = (total_minutes - morning_start) / 30
+            return self.interpolate_color((100, 100, 200), ORANGE_COLOR, progress)
+        elif total_minutes < day_start:
+            
+            return ORANGE_COLOR
+        elif total_minutes < day_end:
+            
+            progress = (total_minutes - day_start) / 30
+            return self.interpolate_color(ORANGE_COLOR, BLUE_COLOR, progress)
+        elif total_minutes < evening_start:
+            
+            return BLUE_COLOR
+        elif total_minutes < evening_end:
+            
+            progress = (total_minutes - evening_start) / 30
+            return self.interpolate_color(BLUE_COLOR, RED_COLOR, progress)
+        elif total_minutes < night_start:
+            
+            return RED_COLOR
+        elif total_minutes < night_end:
+            
+            progress = (total_minutes - night_start) / 30
+            return self.interpolate_color(RED_COLOR, (100, 100, 200), progress)
+        else:
+            
+            return (100, 100, 200)
+
+    def get_icon_for_period(self, period):
+        if period == "morning":
+            return self.morning_icon
+        elif period == "day":
+            return self.day_icon
+        elif period == "evening":
+            return self.evening_icon
+        else:
+            return self.night_icon
+
     def create_icon(self, path):
         return QIcon(path)
-    
-    def calculate_transition_factor(self, offset_minutes=None):
-        now = datetime.now()
-        if offset_minutes is None:
-            offset_minutes = self.time_input.value()
-        shutdown_time = now + timedelta(minutes=offset_minutes)
-        time_diff = (shutdown_time - now).total_seconds()
-        return min(1.0, max(0.0, time_diff / TOTAL_SECONDS_IN_DAY))
     
     def interpolate_color(self, color1, color2, factor):
         r = int(color1[0] * (1 - factor) + color2[0] * factor)
@@ -192,11 +322,15 @@ class ShutdownApp(QMainWindow):
         label.setStyleSheet('; '.join(style_parts) + ';')
 
     def initUI(self):
+
         self.setWindowTitle('Modern Shutdown Scheduler')
         self.setFixedSize(700, 700)
         self.setWindowOpacity(0.98)
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
+
+        app_icon_path = resource_path("assets/icons/icon.ico")
+        self.setWindowIcon(QIcon(app_icon_path))
 
         self.setStyleSheet(Styles.MAIN_WINDOW)
 
@@ -224,16 +358,29 @@ class ShutdownApp(QMainWindow):
         self.progress.setVisible(False)
         layout.addWidget(self.progress)
 
-        self.moon_icon = self.create_icon(resource_path("assets/moon.png"))
-        self.sun_icon = self.create_icon(resource_path("assets/sun.png"))
+        self.morning_icon = self.create_icon(resource_path("assets/images/morning.png"))
+        self.day_icon = self.create_icon(resource_path("assets/images/day.png"))
+        self.evening_icon = self.create_icon(resource_path("assets/images/evening.png"))
+        self.night_icon = self.create_icon(resource_path("assets/images/night.png"))
+        
         now = datetime.now()
-        is_day = 6 <= now.hour < 18
-        icon = self.sun_icon if is_day else self.moon_icon
+        current_period = self.get_time_period(now)
+        icon = self.get_icon_for_period(current_period)
 
         self.icon_label = QLabel()
-        self.icon_label.setPixmap(icon.pixmap(ICON_SIZE, ICON_SIZE))
+        self.icon_label.setFixedSize(ICON_SIZE, ICON_SIZE)
         self.icon_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        layout.addWidget(self.icon_label)
+        self.icon_label.setPixmap(icon.pixmap(ICON_SIZE, ICON_SIZE).scaled(ICON_SIZE, ICON_SIZE, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
+        icon_hbox = QHBoxLayout()
+        icon_hbox.addStretch()
+        icon_hbox.addWidget(self.icon_label)
+        icon_hbox.addStretch()
+        layout.addLayout(icon_hbox)
+
+        self.time_value_label = QLabel('')
+        self.time_value_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.time_value_label.setStyleSheet(Styles.TIME_VALUE_LABEL)
+        layout.addWidget(self.time_value_label)
 
         slider_container = QWidget()
         slider_layout = QVBoxLayout(slider_container)
@@ -259,11 +406,6 @@ class ShutdownApp(QMainWindow):
         self.update_slider_labels()
         slider_layout.addWidget(self.slider_ticks)
         layout.addWidget(slider_container)
-
-        self.time_value_label = QLabel('')
-        self.time_value_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.time_value_label.setStyleSheet(Styles.TIME_VALUE_LABEL)
-        layout.addWidget(self.time_value_label)
         self.update_time_label(self.time_input.value())
 
         self.shutdown_button = QPushButton('Schedule Shutdown')
@@ -288,38 +430,18 @@ class ShutdownApp(QMainWindow):
         central_widget.mousePressEvent = self.mousePressEvent
         central_widget.mouseMoveEvent = self.mouseMoveEvent
 
-        self.sun_animation = QPropertyAnimation(self.icon_label, b"geometry")
-        self.moon_animation = QPropertyAnimation(self.icon_label, b"geometry")
-
-        self.sun_start_rect = QRect(100, 100, ICON_SIZE, ICON_SIZE)
-        self.sun_end_rect = QRect(500, 100, ICON_SIZE, ICON_SIZE)
-        self.moon_start_rect = QRect(500, 100, ICON_SIZE, ICON_SIZE)
-        self.moon_end_rect = QRect(100, 100, ICON_SIZE, ICON_SIZE)
-
-        self.sun_animation.setDuration(1000)
-        self.sun_animation.setStartValue(self.sun_start_rect)
-        self.sun_animation.setEndValue(self.sun_end_rect)
-
-        self.moon_animation.setDuration(1000)
-        self.moon_animation.setStartValue(self.moon_start_rect)
-        self.moon_animation.setEndValue(self.moon_end_rect)
-
         self.dynamic_timer = QTimer(self)
         self.dynamic_timer.timeout.connect(self.check_minute_change)
         self.dynamic_timer.start(1000)
         self.last_minute = datetime.now().minute
 
     def update_background_color(self):
-        transition_factor = self.calculate_transition_factor()
-
-        if transition_factor < 0.25:
-            local_factor = transition_factor / 0.25
-            bg_color = self.interpolate_color(DAY_COLOR, MID_COLOR, local_factor)
-            text_color = self.interpolate_color(NIGHT_COLOR, DAY_COLOR, transition_factor)
-        else:
-            local_factor = (transition_factor - 0.25) / 0.75
-            bg_color = self.interpolate_color(MID_COLOR, NIGHT_COLOR, local_factor)
-            text_color = self.interpolate_color(NIGHT_COLOR, DAY_COLOR, transition_factor)
+        now = datetime.now()
+        offset_minutes = self.time_input.value() if hasattr(self, 'time_input') else DEFAULT_SHUTDOWN_OFFSET
+        target_time = now + timedelta(minutes=offset_minutes)
+        
+        bg_color, text_color = self.get_smooth_colors(target_time)
+        slider_color = self.get_smooth_slider_color(target_time)
 
         color_style = f"background: {self.rgb_to_string(bg_color)}; border-radius: 32px;"
         text_color_str = self.rgb_to_string(text_color)
@@ -328,37 +450,26 @@ class ShutdownApp(QMainWindow):
         if hasattr(self, 'app_name_label'):
             self.app_name_label.setStyleSheet(f'font-size: 24px; font-weight: bold; color: {text_color_str}; margin-bottom: 16px;')
 
-        if transition_factor < 0.25:
-            slider_local = transition_factor / 0.25
-            slider_color = self.interpolate_color(BLUE_COLOR, ORANGE_COLOR, slider_local)
-        else:
-            slider_local = (transition_factor - 0.25) / 0.75
-            slider_color = self.interpolate_color(ORANGE_COLOR, RED_COLOR, slider_local)
         slider_color_str = self.rgb_to_string(slider_color)
-        self.time_input.setStyleSheet(f"QSlider::handle:horizontal {{ background: {slider_color_str}; border: 2px solid #fff; width: 16px; height: 16px; margin: -6px 0; border-radius: 8px; }} QSlider::sub-page:horizontal {{ background: {slider_color_str}; border-radius: 6px; }} QSlider::groove:horizontal {{ border: none; height: 12px; background: rgba(255,255,255,0.12); border-radius: 6px; }}")
+        if hasattr(self, 'time_input'):
+            self.time_input.setStyleSheet(f"QSlider::handle:horizontal {{ background: {slider_color_str}; border: 2px solid #fff; width: 16px; height: 16px; margin: -6px 0; border-radius: 8px; }} QSlider::sub-page:horizontal {{ background: {slider_color_str}; border-radius: 6px; }} QSlider::groove:horizontal {{ border: none; height: 12px; background: rgba(255,255,255,0.12); border-radius: 6px; }}")
 
     def update_sun_moon_animation(self, value):
         try:
-            transition_factor = value / MINUTES_IN_DAY
-            sun_x = int(self.sun_start_rect.x() * (1 - transition_factor) + self.sun_end_rect.x() * transition_factor)
-            moon_x = int(self.moon_start_rect.x() * transition_factor + self.moon_end_rect.x() * (1 - transition_factor))
-            self.icon_label.setGeometry(sun_x, self.sun_start_rect.y(), ICON_SIZE, ICON_SIZE)
-            sun_opacity = 1 - transition_factor
-            moon_opacity = transition_factor
-            if sun_opacity > moon_opacity:
-                self.icon_label.setPixmap(self.sun_icon.pixmap(ICON_SIZE, ICON_SIZE))
-            else:
-                self.icon_label.setPixmap(self.moon_icon.pixmap(ICON_SIZE, ICON_SIZE))
+            now = datetime.now()
+            target_time = now + timedelta(minutes=value)
+            target_period = self.get_time_period(target_time)
+            icon = self.get_icon_for_period(target_period)
+            self.icon_label.setPixmap(icon.pixmap(ICON_SIZE, ICON_SIZE).scaled(ICON_SIZE, ICON_SIZE, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation))
         except Exception as e:
-            self.log_message(f"Error in sun/moon animation: {str(e)}")
+            self.log_message(f"Error in icon animation: {str(e)}")
 
     def update_time_label(self, value):
         target = self.get_shutdown_time(value)
         text = f"Shutdown at {target.hour:02d}:{target.minute:02d}"
         self.time_value_label.setText(text)
         self.update_background_color()
-        transition_factor = self.calculate_transition_factor(value)
-        text_color = self.interpolate_color(NIGHT_COLOR, DAY_COLOR, transition_factor)
+        _, text_color = self.get_smooth_colors(target)
         text_color_str = f'font-size: 18px; font-weight: 600; color: {self.rgb_to_string(text_color)}; margin-bottom: 8px;'
         self.time_value_label.setStyleSheet(text_color_str)
         self.update_sun_moon_animation(value)
@@ -435,9 +546,11 @@ class ShutdownApp(QMainWindow):
         elapsed = int((now - self.progress_start_time).total_seconds())
         remaining = max(0, total - elapsed)
         self.progress.setValue(elapsed)
+        self.progress.setStyleSheet("QProgressBar { color: #222; font-weight: bold; font-size: 16px; background: #e6e6e6; border-radius: 22px; border: 2px solid #bdbdbd; text-align: center; } QProgressBar::chunk { background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #4f8cff, stop:1 #a084e8); border-radius: 22px; margin: 0px; }")
         self.progress.setFormat(f"{remaining} seconds left")
         if elapsed >= total:
             self.progress_timer.stop()
+            self.progress.setStyleSheet(Styles.MAIN_WINDOW)
 
     def cancel_shutdown(self):
         try:
