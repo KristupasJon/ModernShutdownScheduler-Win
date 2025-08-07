@@ -35,10 +35,6 @@ Modern Shutdown Scheduler is a sleek, super lightweight, and user-friendly PyQt6
 ## Requirements
 - **Operating System**: Windows
 
-## Why Administrator Privileges Are Required
-
-Modern Shutdown Scheduler requires administrator rights to schedule or cancel system shutdowns. On Windows, these actions affect the entire system and are restricted to users with elevated privileges for security reasons. When you run the application, you may be prompted to grant administrator access so the app can perform shutdown operations on your behalf.
-
 ## Download or Clone
 
 You can download the latest release directly from the [Releases](https://github.com/KristupasJon/ModernShutdownScheduler-Win/releases) page.

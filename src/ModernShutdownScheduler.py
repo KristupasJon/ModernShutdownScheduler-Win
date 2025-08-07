@@ -11,10 +11,20 @@ from PyQt6.QtCore import Qt, QTimer
 from PyQt6.QtGui import QIcon
 from datetime import datetime, timedelta
 
+if platform.system() != "Windows":
+    app = QApplication([])
+    QMessageBox.critical(None, "Unsupported OS", "This application can only run on Windows.")
+    sys.exit()
+
 MINUTES_IN_DAY = 24 * 60
 DEFAULT_SHUTDOWN_OFFSET = 1
-SLIDER_TICK_COUNT = 20
+SLIDER_TICK_COUNT = 13
 ICON_SIZE = 100
+
+# appearance constants
+WINDOW_OPACITY = 0.8
+WINDOW_WIDTH = 700
+WINDOW_HEIGHT = 700
 
 MORNING_COLOR = (255, 200, 120)
 DAY_COLOR = (255, 255, 255)
@@ -23,24 +33,6 @@ NIGHT_COLOR = (0, 0, 0)
 BLUE_COLOR = (79, 140, 255)
 ORANGE_COLOR = (220, 140, 60)
 RED_COLOR = (255, 60, 60)
-
-if platform.system() != "Windows":
-    app = QApplication([])
-    QMessageBox.critical(None, "Unsupported OS", "This application can only run on Windows.")
-    sys.exit()
-
-def is_admin():
-    try:
-        return ctypes.windll.shell32.IsUserAnAdmin()
-    except:
-        return False
-
-if not is_admin():
-    ctypes.windll.shell32.ShellExecuteW(
-        None, "runas", sys.executable,
-        f'"{os.path.abspath(__file__)}"', None, 1
-    )
-    sys.exit()
 
 def resource_path(relative_path):
     try:
@@ -324,8 +316,8 @@ class ShutdownApp(QMainWindow):
     def initUI(self):
 
         self.setWindowTitle('Modern Shutdown Scheduler')
-        self.setFixedSize(700, 700)
-        self.setWindowOpacity(0.98)
+        self.setFixedSize(WINDOW_WIDTH, WINDOW_HEIGHT)
+        self.setWindowOpacity(WINDOW_OPACITY)
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
 
