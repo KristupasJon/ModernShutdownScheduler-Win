@@ -6,13 +6,23 @@ Modern Shutdown Scheduler is a sleek, super lightweight, and user-friendly PyQt6
 <table>
   <tr>
     <td>
-      <img width="850" height="807" alt="day" src="https://github.com/user-attachments/assets/dd627e2e-d112-4ca0-ac4f-36de96eb9b07" />
+      <img width="700" height="700" alt="image" src="https://github.com/user-attachments/assets/32b3ba41-703f-4762-b0a1-a9cafedf8760" />
     </td>
     <td>
-      <img width="850" height="807" alt="night" src="https://github.com/user-attachments/assets/fb3a56dd-a590-4915-9da1-d9d3a72c72fa" />
+      <img width="700" height="700" alt="image" src="https://github.com/user-attachments/assets/bd00dc28-7f3d-4f17-85e3-c05ac65203dd" />
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <img width="700" height="700" alt="image" src="https://github.com/user-attachments/assets/91922f32-f1a1-4168-bc0f-44007f175160" />
+    </td>
+    <td>
+      <img width="700" height="700" alt="image" src="https://github.com/user-attachments/assets/ce74ef2c-ca92-4c38-baa6-e8364cc6d3dc" />
     </td>
   </tr>
 </table>
+
+
 
 ## Features
 - Super lightweight and uses very little memory
