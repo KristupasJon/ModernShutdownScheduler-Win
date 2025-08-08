@@ -1,7 +1,6 @@
 import sys
 import os
 import subprocess
-import ctypes
 import platform
 from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
@@ -506,7 +505,7 @@ class ShutdownApp(QMainWindow):
 
     def initiate_shutdown(self):
         try:
-            res = subprocess.run(["shutdown", "/a"], capture_output=True)
+            res = subprocess.run(["shutdown", "/a"], capture_output=True, creationflags=subprocess.CREATE_NO_WINDOW)
             if res.returncode == 0:
                 self.log_message("A shutdown was already pending and has been canceled.")
             now = datetime.now()
@@ -518,7 +517,7 @@ class ShutdownApp(QMainWindow):
                 f"Initiating system shutdown at {self.format_time(target_time)} "
                 f"(in {seconds_until} seconds)"
             )
-            subprocess.run(["shutdown", "/s", "/t", str(seconds_until)])
+            subprocess.run(["shutdown", "/s", "/t", str(seconds_until)], creationflags=subprocess.CREATE_NO_WINDOW)
             self.progress.setVisible(True)
             self.progress.setMaximum(seconds_until)
             self.progress.setValue(0)
@@ -553,7 +552,7 @@ class ShutdownApp(QMainWindow):
 
     def cancel_shutdown(self):
         try:
-            subprocess.run(["shutdown", "/a"], check=True)
+            subprocess.run(["shutdown", "/a"], check=True, creationflags=subprocess.CREATE_NO_WINDOW)
             self.log_message("Shutdown has been canceled.")
             self.hide_progress_bar()
             self.update_slider_labels()
