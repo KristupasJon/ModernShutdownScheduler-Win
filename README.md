@@ -31,8 +31,8 @@ Modern Shutdown Scheduler is a sleek, super lightweight, and user-friendly PyQt6
 - Sun and moon animations based on the time of day
 - Cancel scheduled shutdowns with a single click
 - System log for tracking actions
-- **Adjustable window opacity**: Change the transparency of the app window to your preference.
-- **Time format selection**: Switch between 24-hour and 12-hour (AM/PM) time formats.
+- Adjustable window opacity: Change the transparency of the app window to your preference.
+- Time format selection: Switch between 24-hour and 12-hour (AM/PM) time formats.
 
 ## Requirements
 - **Operating System**: Windows
